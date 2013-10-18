@@ -1,0 +1,5 @@
+name = Unmovable Home Link
+description = Add a permission to restrict the ability to move menu links pointing at front page.
+core = 7.x
+dependencies[] = menu
+files[] = tests/unmovable_home_link.test
