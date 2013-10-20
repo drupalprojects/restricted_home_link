@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Tests for unmovable_home_link module
+ * Tests for restricted_home_link module
  */
-class UnmovableHomeLinkTestCase extends DrupalWebTestCase {
+class RestrictedHomeLinkTestCase extends DrupalWebTestCase {
 
   public static function getInfo() {
     return array(
-      'name' => 'Unmovable Home Link',
-      'description' => 'Test that we can prevent menu items pointing at the front page from being moved',
-      'group' => 'Unmovable Home Link'
+      'name' => 'Restricted Home Link',
+      'description' => 'Test that we can prevent menu items pointing at the front page from being created/edited/deleted/moved',
+      'group' => 'Restricted Home Link'
     );
   }
 
@@ -17,12 +17,12 @@ class UnmovableHomeLinkTestCase extends DrupalWebTestCase {
   private $user_disallowed;
 
   function setUp() {
-    parent::setUp('unmovable_home_link');
+    parent::setUp('restricted_home_link');
     // Set up users
     $this->user_allowed = $this->drupalCreateUser(array(
       'access administration pages',
       'administer menu',
-      'move menu items pointing at front page',
+      'create/edit/delete/move menu items pointing at front page',
     ));
     $this->user_disallowed = $this->drupalCreateUser(array(
       'access administration pages',
@@ -31,23 +31,23 @@ class UnmovableHomeLinkTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Test on non-<front> menu items
+   * Test on non-<front> menu items.
    *
    * 1) Test that    allowed users can create/edit/delete non-<front> menu items.
    * 2) Test that disallowed users can create/edit/delete non-<front> menu items.
    */
   function testNonFront() {
-    // Create menu link with path different from <front>
+    // Create menu link with path different from <front>.
     $menu_link = array('link_title' => 'Node', 'link_path' => drupal_get_normal_path('node'));
     $mlid = menu_link_save($menu_link);
 
-    // Allowed users
+    // Allowed users.
     $this->drupalLogin($this->user_allowed);
     $this->assertCreateMenuLink(TRUE, 'node');
     $this->assertEditMenuLink  (TRUE, $mlid);
     $this->assertDeleteMenuLink(TRUE, $mlid);
 
-    // Disallowed users
+    // Disallowed users.
     $this->drupalLogin($this->user_disallowed);
     $this->assertCreateMenuLink(TRUE, 'node');
     $this->assertEditMenuLink  (TRUE, $mlid);
@@ -55,28 +55,29 @@ class UnmovableHomeLinkTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Test on <front> menu items
+   * Test on <front> menu items.
    *
    * 1) Test that    allowed users can    create/edit/delete <front> menu items.
    * 2) Test that disallowed users cannot create/edit/delete <front> menu items.
    */
   function testFront() {
-    // Create menu link with path pointing at <front>
+    // Create menu link with path pointing at <front>.
     $menu_link = array('link_title' => 'Home', 'link_path' => drupal_get_normal_path('<front>'));
     $mlid = menu_link_save($menu_link);
 
-    // Allowed users
+    // Allowed users.
     $this->drupalLogin($this->user_allowed);
     $this->assertCreateMenuLink(TRUE, '<front>');
     $this->assertEditMenuLink  (TRUE, $mlid);
     $this->assertDeleteMenuLink(TRUE, $mlid);
 
-    // Disallowed users
+    // Disallowed users.
     $this->drupalLogin($this->user_disallowed);
     $this->assertCreateMenuLink(FALSE, '<front>');
     $this->assertEditMenuLink  (FALSE, $mlid);
     $this->assertDeleteMenuLink(FALSE, $mlid);
   }
+
 
   /**
    * Helper - Assert that a user can/cannot create a menu link
@@ -92,7 +93,7 @@ class UnmovableHomeLinkTestCase extends DrupalWebTestCase {
    * @param $group
    *   The type of assertion - examples are 'Browser', 'PHP'
    */
-  function assertCreateMenuLink($allowed, $link_path, $menu_name = 'navigation', $message = '', $group = 'Menu Control') {
+  function assertCreateMenuLink($allowed, $link_path, $menu_name = 'navigation', $message = '', $group = 'Restricted Home Link') {
     // Create menu item through form
     $link_title = $this->randomName(8);
     $this->drupalGet("admin/structure/menu/manage/$menu_name/add");
@@ -128,7 +129,7 @@ class UnmovableHomeLinkTestCase extends DrupalWebTestCase {
    * @param $group
    *   The type of assertion - examples are 'Browser', 'PHP'
    */
-  function assertEditMenuLink($allowed, $mlid, $menu_name = 'navigation', $message = '', $group = 'Menu Control') {
+  function assertEditMenuLink($allowed, $mlid, $menu_name = 'navigation', $message = '', $group = 'Restricted Home Link') {
     // edit link on menu overview
     $this->drupalGet("admin/structure/menu/manage/$menu_name");
     $this->assertResponse(200);
@@ -157,7 +158,7 @@ class UnmovableHomeLinkTestCase extends DrupalWebTestCase {
    * @param $group
    *   The type of assertion - examples are 'Browser', 'PHP'
    */
-  function assertDeleteMenuLink($allowed, $mlid, $menu_name = 'navigation', $message = '', $group = 'Menu Control') {
+  function assertDeleteMenuLink($allowed, $mlid, $menu_name = 'navigation', $message = '', $group = 'Restricted Home Link') {
     // delete link on menu overview
     $this->drupalGet("admin/structure/menu/manage/$menu_name");
     $this->assertResponse(200);

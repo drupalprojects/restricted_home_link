@@ -3,7 +3,7 @@
 /**
  * Allow / disallow moving <front> menu links
  */
-Drupal.behaviors.unmovableHomeLink = {
+Drupal.behaviors.restrictedHomeLink = {
   attach: function (context, settings) {
     // tableDrag is required and we should be on the menu overview admin page.
     if (typeof Drupal.tableDrag == 'undefined' || typeof Drupal.tableDrag['menu-overview'] == 'undefined') {

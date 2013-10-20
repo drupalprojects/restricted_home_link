@@ -1,0 +1,5 @@
+name = Restricted Home Link
+description = Add a permission to restrict the ability to create/edit/delete/move menu links pointing at front page.
+core = 7.x
+dependencies[] = menu
+files[] = tests/restricted_home_link.test
